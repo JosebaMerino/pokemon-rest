@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import com.ipartek.formacion.model.pojo.Habilidad;
 import com.ipartek.formacion.model.pojo.Pokemon;
 import com.mysql.jdbc.Statement;
+import com.mysql.jdbc.log.Log;
 
 public class PokemonDAO implements IDAO<Pokemon> {
 
@@ -119,9 +120,22 @@ public class PokemonDAO implements IDAO<Pokemon> {
 
 	@Override
 	public Pokemon update(int id, Pokemon pojo) throws Exception {
-		LOG.trace("not implemented yet");
-		// TODO Auto-generated method stub
-		return null;
+		try(Connection con = ConnectionManager.getConnection();
+				PreparedStatement pst = con.prepareStatement(SQL_UPDATE)) {
+			pst.setString(1, pojo.getNombre());
+			pst.setInt(2, id);
+			int affectedRows = pst.executeUpdate();
+			if(affectedRows == 1) {
+				LOG.trace("Actualizado correctamente");
+			} else {
+				LOG.trace("La actualizacion ha sido incorrecta, se han actualizado " + affectedRows + " filas");
+			}
+		} catch (Exception e) {
+			LOG.error(e);
+			throw e;
+		}
+		pojo.setId(id);
+		return pojo;
 	}
 
 	@Override

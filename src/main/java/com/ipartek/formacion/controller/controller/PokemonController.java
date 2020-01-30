@@ -168,7 +168,7 @@ public class PokemonController extends HttpServlet {
 		try {
 			int id = Utilidades.obtenerId(request.getPathInfo());
 			pokemon = dao.update(id, pokemon);
-			status = HttpServletResponse.SC_NO_CONTENT;
+			status = HttpServletResponse.SC_OK;
 		}catch(MySQLIntegrityConstraintViolationException e) {
 			LOG.error("Pokemon duplicado");
 			status = HttpServletResponse.SC_CONFLICT;
@@ -180,13 +180,13 @@ public class PokemonController extends HttpServlet {
 		}
 
 		if(status >= 200 && status < 300) {
-		try (PrintWriter out = response.getWriter()) {
-			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			Gson json = new Gson();
-			out.print(json.toJson(pokemon));
-			out.flush();
+			try (PrintWriter out = response.getWriter()) {
+				response.setStatus(status);
+				Gson json = new Gson();
+				out.print(json.toJson(pokemon));
+				out.flush();
 
-		}
+			}
 		} else {
 			response.setStatus(status);
 		}
