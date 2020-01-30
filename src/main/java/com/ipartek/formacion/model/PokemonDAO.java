@@ -27,6 +27,8 @@ public class PokemonDAO implements IDAO<Pokemon> {
 	private final String SQL_GET_BYNAME = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.nombre LIKE ? ORDER BY p.id ASC LIMIT 500;";
 
 
+	private final String SQL_DELETE= "DELETE FROM pokemon WHERE id = ?;";
+
 	private PokemonDAO() {
 		super();
 	}
@@ -91,9 +93,25 @@ public class PokemonDAO implements IDAO<Pokemon> {
 
 	@Override
 	public Pokemon delete(int id) throws Exception {
-		LOG.trace("not implemented yet");
-		// TODO Auto-generated method stub
-		return null;
+		Pokemon resul = getById(id);
+
+		try(Connection con = ConnectionManager.getConnection();
+				PreparedStatement pst = con.prepareStatement(SQL_DELETE)) {
+			pst.setInt(1, id);
+
+			int affectedRows = pst.executeUpdate();
+
+			if(affectedRows == 1) {
+				LOG.info("Pokemon borrado correctamente de la BD");
+			} else {
+				LOG.info("Parece que se ha borrado " + affectedRows + " pokemons");
+				resul = null;
+			}
+
+		} catch (Exception e) {
+			LOG.error(e);
+		}
+		return resul;
 	}
 
 	@Override

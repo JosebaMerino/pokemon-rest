@@ -2,6 +2,7 @@ package com.ipartek.formacion.controller.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpRetryException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.Utilities;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.ipartek.formacion.controller.utils.Utilidades;
@@ -26,6 +30,9 @@ public class PokemonController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static PokemonDAO dao;
+
+
+	private final static Logger LOG = LogManager.getLogger(PokemonController.class);
 
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -130,7 +137,34 @@ public class PokemonController extends HttpServlet {
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+		int id = -1;
+		try {
+			id = Utilidades.obtenerId(request.getPathInfo());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(id >= 0) {
+			Pokemon pokemon = null;
+			try {
+				pokemon = dao.delete(id);
+			} catch (Exception e) {
+				LOG.error(e);
+			}
+
+			if(pokemon == null) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			} else {
+				response.setStatus(HttpServletResponse.SC_OK);
+				try (PrintWriter out = response.getWriter()) {
+
+					Gson json = new Gson();
+					out.print(json.toJson(pokemon));
+					out.flush();
+
+				}
+			}
+		}
 	}
 
 }
