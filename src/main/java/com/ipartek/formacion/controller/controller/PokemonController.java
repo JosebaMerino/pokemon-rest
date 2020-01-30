@@ -1,18 +1,17 @@
 package com.ipartek.formacion.controller.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.HttpRetryException;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.Utilities;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -21,6 +20,7 @@ import com.google.gson.Gson;
 import com.ipartek.formacion.controller.utils.Utilidades;
 import com.ipartek.formacion.model.PokemonDAO;
 import com.ipartek.formacion.model.pojo.Pokemon;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 /**
  * Servlet implementation class PokemonController
@@ -121,7 +121,37 @@ public class PokemonController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+		BufferedReader reader = request.getReader();
+		Gson gson = new Gson();
+		Pokemon pokemon = null;
+		pokemon = gson.fromJson(reader, Pokemon.class);
+		int status = 0;
+
+		try {
+			pokemon = dao.create(pokemon);
+			status = HttpServletResponse.SC_NO_CONTENT;
+		}catch(MySQLIntegrityConstraintViolationException e) {
+			LOG.error("Pokemon duplicado");
+			status = HttpServletResponse.SC_CONFLICT;
+		}
+		catch (Exception e) {
+			LOG.error(e);
+			status = HttpServletResponse.SC_BAD_REQUEST;
+			e.printStackTrace();
+		}
+
+		if(status >= 200 && status < 300) {
+		try (PrintWriter out = response.getWriter()) {
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			Gson json = new Gson();
+			out.print(json.toJson(pokemon));
+			out.flush();
+
+		}
+		} else {
+			response.setStatus(status);
+		}
+
 	}
 
 	/**

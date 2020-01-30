@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.ipartek.formacion.model.pojo.Habilidad;
 import com.ipartek.formacion.model.pojo.Pokemon;
+import com.mysql.jdbc.Statement;
 
 public class PokemonDAO implements IDAO<Pokemon> {
 
@@ -26,6 +27,7 @@ public class PokemonDAO implements IDAO<Pokemon> {
 	private final String SQL_GET_BYID = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.id  = ? ORDER BY h.id ASC LIMIT 500;";
 	private final String SQL_GET_BYNAME = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.nombre LIKE ? ORDER BY p.id ASC LIMIT 500;";
 
+	private final String SQL_INSERT = "INSERT INTO pokemon(nombre) VALUES (?);";
 
 	private final String SQL_DELETE= "DELETE FROM pokemon WHERE id = ?;";
 
@@ -123,9 +125,23 @@ public class PokemonDAO implements IDAO<Pokemon> {
 
 	@Override
 	public Pokemon create(Pokemon pojo) throws Exception {
-		LOG.trace("not implemented yet");
-		// TODO Auto-generated method stub
-		return null;
+		Pokemon resul = null;
+		try(Connection con = ConnectionManager.getConnection();
+				PreparedStatement pst = con.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS )
+				){
+			pst.setString(1, pojo.getNombre());
+			int affectedRows = pst.executeUpdate();
+			if(affectedRows == 1) {
+				ResultSet rs = pst.getGeneratedKeys();
+
+				resul = pojo;
+				rs.next();
+				resul.setId(rs.getInt(1));
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return resul;
 	}
 
 	public List<Pokemon> getByName(String nombreP) {
