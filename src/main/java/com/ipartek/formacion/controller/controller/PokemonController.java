@@ -84,7 +84,7 @@ public class PokemonController extends HttpServlet {
 			if(pokemons.isEmpty()) {
 				status = HttpServletResponse.SC_NO_CONTENT;
 			}
-			objetoRespuesta = pokemons;
+			objetoRespuesta = pokemons; 
 		} else {
 			objetoRespuesta = dao.getById(id);
 			if(objetoRespuesta == null) {
