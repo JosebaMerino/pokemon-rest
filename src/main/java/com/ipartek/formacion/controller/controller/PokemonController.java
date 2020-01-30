@@ -159,7 +159,37 @@ public class PokemonController extends HttpServlet {
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+		BufferedReader reader = request.getReader();
+		Gson gson = new Gson();
+		Pokemon pokemon = null;
+		pokemon = gson.fromJson(reader, Pokemon.class);
+		int status = 0;
+
+		try {
+			int id = Utilidades.obtenerId(request.getPathInfo());
+			pokemon = dao.update(id, pokemon);
+			status = HttpServletResponse.SC_NO_CONTENT;
+		}catch(MySQLIntegrityConstraintViolationException e) {
+			LOG.error("Pokemon duplicado");
+			status = HttpServletResponse.SC_CONFLICT;
+		}
+		catch (Exception e) {
+			LOG.error(e);
+			status = HttpServletResponse.SC_BAD_REQUEST;
+			e.printStackTrace();
+		}
+
+		if(status >= 200 && status < 300) {
+		try (PrintWriter out = response.getWriter()) {
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			Gson json = new Gson();
+			out.print(json.toJson(pokemon));
+			out.flush();
+
+		}
+		} else {
+			response.setStatus(status);
+		}
 	}
 
 	/**

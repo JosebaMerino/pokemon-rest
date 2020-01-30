@@ -28,6 +28,7 @@ public class PokemonDAO implements IDAO<Pokemon> {
 	private final String SQL_GET_BYNAME = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.nombre LIKE ? ORDER BY p.id ASC LIMIT 500;";
 
 	private final String SQL_INSERT = "INSERT INTO pokemon(nombre) VALUES (?);";
+	private final String SQL_UPDATE = "UPDATE pokemon SET nombre = ? WHERE id = ?";
 
 	private final String SQL_DELETE= "DELETE FROM pokemon WHERE id = ?;";
 
