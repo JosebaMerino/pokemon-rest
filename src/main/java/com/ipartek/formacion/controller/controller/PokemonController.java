@@ -25,8 +25,7 @@ import com.ipartek.formacion.model.pojo.Pokemon;
 public class PokemonController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-    private static PokemonDAO dao;
-
+	private static PokemonDAO dao;
 
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -44,22 +43,25 @@ public class PokemonController extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 
 		super.service(request, response);
 
-
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		int id = -1;
 		String nombre = request.getParameter("nombre");
@@ -73,29 +75,28 @@ public class PokemonController extends HttpServlet {
 			e.printStackTrace();
 		}
 		List<Pokemon> pokemons;
-		if(nombre != null && nombre.length() != 0 ) {
+		if (nombre != null && nombre.length() != 0) {
 			pokemons = dao.getByName(nombre);
-			if(pokemons.isEmpty()) {
+			if (pokemons.isEmpty()) {
 				status = HttpServletResponse.SC_NO_CONTENT;
 			}
 			objetoRespuesta = pokemons;
-		} else if(id == -1) {
+		} else if (id == -1) {
 			pokemons = dao.getAll();
-			if(pokemons.isEmpty()) {
+			if (pokemons.isEmpty()) {
 				status = HttpServletResponse.SC_NO_CONTENT;
 			}
-			objetoRespuesta = pokemons; 
+			objetoRespuesta = pokemons;
 		} else {
 			objetoRespuesta = dao.getById(id);
-			if(objetoRespuesta == null) {
+			if (objetoRespuesta == null) {
 				status = HttpServletResponse.SC_NOT_FOUND;
 			}
 
 		}
 
-
 		response.setStatus(status);
-		if(objetoRespuesta != null) {
+		if (objetoRespuesta != null) {
 			try (PrintWriter out = response.getWriter()) {
 
 				Gson json = new Gson();
@@ -105,28 +106,30 @@ public class PokemonController extends HttpServlet {
 			}
 		}
 
-
-
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 	}
 
 	/**
 	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
 	 */
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPut(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 	}
 
 	/**
 	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
 	 */
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 	}
 
