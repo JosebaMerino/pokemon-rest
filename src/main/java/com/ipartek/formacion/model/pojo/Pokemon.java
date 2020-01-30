@@ -1,16 +1,28 @@
 package com.ipartek.formacion.model.pojo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pokemon {
 
 	private int id;
 	private String nombre;
-	
-	// private List<Habilidad> habilidades
-	
+
+	private List<Habilidad> habilidades;
+
 	public Pokemon() {
 		super();
 		this.id = 0;
 		this.nombre = "";
+		this.habilidades = new ArrayList<Habilidad>();
+	}
+
+	public List<Habilidad> getHabilidades() {
+		return habilidades;
+	}
+
+	public void setHabilidades(List<Habilidad> habilidades) {
+		this.habilidades = habilidades;
 	}
 
 	public int getId() {
@@ -31,8 +43,9 @@ public class Pokemon {
 
 	@Override
 	public String toString() {
-		return "Pokemon [id=" + id + ", nombre=" + nombre + "]";
+		return "Pokemon [id=" + id + ", nombre=" + nombre + ", habilidades=" + habilidades + "]";
 	}
-	
-	
+
+
+
 }
