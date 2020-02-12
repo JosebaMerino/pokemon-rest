@@ -24,7 +24,7 @@ public class PokemonDAO implements IDAO<Pokemon> {
 
 	private final static Logger LOG = LogManager.getLogger(PokemonDAO.class);
 
-
+	private final String SLQ_GET_ALL = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM ( pokemon p LEFT JOIN pokemon_has_habilidad phh ON p.id = phh.pokemonId ) LEFT JOIN habilidad h ON h.id = phh.habilidadId ORDER BY p.id ASC LIMIT 500;";
 	private final String SQL_GET_BYID = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.id  = ? ORDER BY h.id ASC LIMIT 500;";
 	private final String SQL_GET_BYNAME = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.nombre LIKE ? ORDER BY p.id ASC LIMIT 500;";
 
@@ -47,12 +47,10 @@ public class PokemonDAO implements IDAO<Pokemon> {
 	@Override
 	public List<Pokemon> getAll() {
 
-		String sql = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id ORDER BY p.id ASC LIMIT 500;";
-
 		List<Pokemon> resul = null;
 
 		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(sql);
+				PreparedStatement pst = con.prepareStatement(SLQ_GET_ALL);
 				ResultSet rs = pst.executeQuery() ) {
 			resul = mapper(rs);
 		} catch (Exception e) {
@@ -205,7 +203,10 @@ public class PokemonDAO implements IDAO<Pokemon> {
 			habilidad.setId(rs.getInt("habilidadId"));
 			habilidad.setNombre(rs.getString("habilidadNombre"));
 
-			p.getHabilidades().add(habilidad);
+			if(habilidad.getNombre() != null) {
+				p.getHabilidades().add(habilidad);
+			}
+
 
 		}
 
