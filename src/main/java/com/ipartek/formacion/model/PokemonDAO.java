@@ -25,7 +25,7 @@ public class PokemonDAO implements IDAO<Pokemon> {
 	private final static Logger LOG = LogManager.getLogger(PokemonDAO.class);
 
 	private final String SLQ_GET_ALL = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM ( pokemon p LEFT JOIN pokemon_has_habilidad phh ON p.id = phh.pokemonId ) LEFT JOIN habilidad h ON h.id = phh.habilidadId ORDER BY p.id ASC LIMIT 500;";
-	private final String SQL_GET_BYID = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.id  = ? ORDER BY h.id ASC LIMIT 500;";
+	private final String SQL_GET_BYID = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM ( pokemon p LEFT JOIN pokemon_has_habilidad phh ON p.id = phh.pokemonId ) LEFT JOIN habilidad h ON h.id = phh.habilidadId WHERE p.id = ? ORDER BY p.id ASC LIMIT 500;";
 	private final String SQL_GET_BYNAME = "SELECT p.id 'pokemonId', p.nombre 'pokemonNombre' , h.id 'habilidadId', h.nombre 'habilidadNombre' FROM habilidad h, pokemon p, pokemon_has_habilidad phh WHERE phh.pokemonId = p.id AND phh.habilidadId = h.id AND p.nombre LIKE ? ORDER BY p.id ASC LIMIT 500;";
 
 	private final String SQL_INSERT = "INSERT INTO pokemon(nombre) VALUES (?);";
