@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -139,20 +140,51 @@ public class PokemonDAO implements IDAO<Pokemon> {
 	@Override
 	public Pokemon create(Pokemon pojo) throws Exception {
 		Pokemon resul = null;
-		try(Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS )
+		Connection con = ConnectionManager.getConnection();
+		try(PreparedStatement pst = con.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS )
 				){
+			con.setAutoCommit(false);
+
+			// insert en tabla pokemon
 			pst.setString(1, pojo.getNombre());
 			int affectedRows = pst.executeUpdate();
 			if(affectedRows == 1) {
+				// obtener el id generado
 				ResultSet rs = pst.getGeneratedKeys();
 
 				resul = pojo;
 				rs.next();
 				resul.setId(rs.getInt(1));
 			}
+			// por cada habilidad insertar en pokemon_has_habilidades
+			String SQL = "INSERT INTO pokemon_has_habilidad(pokemonId, habilidadId) VALUES (?, ?);";
+			for (Habilidad habilidad: pojo.getHabilidades()) {
+				LOG.trace(pojo.getId() + "--" +  habilidad.getId());
+
+				try(PreparedStatement pstHabilidad = con.prepareStatement(SQL)) {
+					pstHabilidad.setInt(1, pojo.getId());
+					pstHabilidad.setInt(2, habilidad.getId());
+					LOG.trace(SQL);
+					int affectedRows2 = pst.executeUpdate();
+					if(affectedRows2 == 1) {
+
+					}
+
+				}
+			}
+
+			//si todo funciona bien
+
+
+			//con.commit();
 		} catch (Exception e) {
+			con.rollback();
 			throw e;
+		}
+		 finally {
+			if(con != null) {
+				con.close();
+			}
 		}
 		return resul;
 	}
