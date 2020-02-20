@@ -119,17 +119,48 @@ public class PokemonDAO implements IDAO<Pokemon> {
 
 	@Override
 	public Pokemon update(int id, Pokemon pojo) throws Exception {
-		try(Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_UPDATE)) {
+		Connection con = ConnectionManager.getConnection();
+		con.setAutoCommit(false);
+		try(PreparedStatement pst = con.prepareStatement(SQL_UPDATE)) {
 			pst.setString(1, pojo.getNombre());
 			pst.setInt(2, id);
 			int affectedRows = pst.executeUpdate();
 			if(affectedRows == 1) {
 				LOG.trace("Actualizado correctamente");
+
+				final String SQL_DELETE = "DELETE FROM pokemon_has_habilidad  WHERE pokemonId = ?;";
+				try(PreparedStatement pstDelete = con.prepareStatement(SQL_DELETE)) {
+					pstDelete.setInt(1, id);
+					LOG.debug(pstDelete);
+					int affectedRowsDelete =   pstDelete.executeUpdate();
+					if(affectedRowsDelete >= 0) {
+						String SQL = "INSERT INTO pokemon_has_habilidad(pokemonId, habilidadId) VALUES (?, ?);";
+						for (Habilidad habilidad: pojo.getHabilidades()) {
+							LOG.trace(id + "--" +  habilidad.getId());
+
+							try(PreparedStatement pstHabilidad = con.prepareStatement(SQL)) {
+								pstHabilidad.setInt(1, id);
+								pstHabilidad.setInt(2, habilidad.getId());
+								LOG.trace(pstHabilidad);
+								int affectedRows2 = pstHabilidad.executeUpdate();
+								if(affectedRows2 == 1) {
+
+								}
+
+							}
+						}
+					}
+				}
+
+
+
+
+				con.commit();
 			} else {
 				LOG.trace("La actualizacion ha sido incorrecta, se han actualizado " + affectedRows + " filas");
 			}
 		} catch (Exception e) {
+			con.rollback();
 			LOG.error(e);
 			throw e;
 		}
