@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.ipartek.formacion.model.UsuarioDAO;
 import com.ipartek.formacion.model.pojo.Pokemon;
 import com.ipartek.formacion.model.pojo.Usuario;
 
@@ -25,16 +26,13 @@ public class LoginController extends HttpServlet {
 
 	private final static Logger LOG = Logger.getLogger(LoginController.class);
 
-	private Usuario[] usuarios = {
-	                              new Usuario(1, "admin", "admin")
-	                              };
-
+	private UsuarioDAO daoUsuario;
     /**
      * @see HttpServlet#HttpServlet()
      */
     public LoginController() {
         super();
-        // TODO Auto-generated constructor stub
+        daoUsuario = UsuarioDAO.getInstance();
     }
 
 	/**
@@ -61,23 +59,14 @@ public class LoginController extends HttpServlet {
 		usuarioRecibido = gson.fromJson(reader, Usuario.class);
 
 		// Probar que esta en la BD.
-		//TODO: Conectarse a la BD.
 
-		boolean loginCorrecto = false;
-		Usuario usuario = null;
-		for (Usuario u : usuarios) {
-			if(u.getNombre().equals(usuarioRecibido.getNombre()) && u.getPassword().equals(usuarioRecibido.getPassword())) {
-				loginCorrecto = true;
-				usuario = u;
-				break;
-			}
-		}
+		Usuario usuarioLogeado = daoUsuario.login(usuarioRecibido);
 
-		if(loginCorrecto) {
+		if(usuarioLogeado != null) {
 			// Si el login es correcto creamos la sesion y respondemos con codigo 200
 
 			HttpSession session = request.getSession();
-			session.setAttribute("usuario", usuario);
+			session.setAttribute("usuario", usuarioLogeado);
 			session.setMaxInactiveInterval(600);
 
 			response.setStatus(HttpServletResponse.SC_OK);

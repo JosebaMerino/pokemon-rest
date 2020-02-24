@@ -26,8 +26,7 @@ CREATE TABLE IF NOT EXISTS `habilidad` (
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
--- Volcando datos para la tabla pokebd.habilidad: ~6 rows (aproximadamente)
-DELETE FROM `habilidad`;
+-- Volcando datos para la tabla pokebd.habilidad: ~7 rows (aproximadamente)
 /*!40000 ALTER TABLE `habilidad` DISABLE KEYS */;
 INSERT INTO `habilidad` (`id`, `nombre`) VALUES
 	(6, 'ascua'),
@@ -46,16 +45,24 @@ CREATE TABLE IF NOT EXISTS `pokemon` (
   `nombre` varchar(50) CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
 
--- Volcando datos para la tabla pokebd.pokemon: ~4 rows (aproximadamente)
-DELETE FROM `pokemon`;
+-- Volcando datos para la tabla pokebd.pokemon: ~12 rows (aproximadamente)
 /*!40000 ALTER TABLE `pokemon` DISABLE KEYS */;
 INSERT INTO `pokemon` (`id`, `nombre`) VALUES
+	(33, 'admin'),
+	(23, 'Ander 2'),
+	(2, 'BUA SAPI'),
 	(4, 'bulbasaur'),
-	(3, 'charmander'),
-	(1, 'lucario'),
-	(2, 'pikachu');
+	(22, 'bulbasaur\''),
+	(31, 'DA MIKEL BUA'),
+	(3, 'DA MIKEL BUA SAPI'),
+	(14, 'MIKEL BUA'),
+	(32, 'NUEVO'),
+	(11, 'Pichachu'),
+	(30, 'Pichu'),
+	(29, 'pikachuuuajjjjja'),
+	(5, 'raichuuu');
 /*!40000 ALTER TABLE `pokemon` ENABLE KEYS */;
 
 -- Volcando estructura para tabla pokebd.pokemon_has_habilidad
@@ -69,21 +76,41 @@ CREATE TABLE IF NOT EXISTS `pokemon_has_habilidad` (
   CONSTRAINT `FK_pokemon` FOREIGN KEY (`pokemonId`) REFERENCES `pokemon` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Volcando datos para la tabla pokebd.pokemon_has_habilidad: ~6 rows (aproximadamente)
-DELETE FROM `pokemon_has_habilidad`;
+-- Volcando datos para la tabla pokebd.pokemon_has_habilidad: ~13 rows (aproximadamente)
 /*!40000 ALTER TABLE `pokemon_has_habilidad` DISABLE KEYS */;
 INSERT INTO `pokemon_has_habilidad` (`pokemonId`, `habilidadId`) VALUES
-	(1, 1),
+	(2, 1),
 	(3, 1),
 	(4, 1),
-	(1, 2),
-	(1, 3),
+	(4, 2),
+	(2, 3),
 	(3, 3),
-	(2, 4),
-	(2, 5),
+	(29, 4),
+	(30, 4),
+	(32, 4),
+	(29, 5),
+	(30, 5),
+	(32, 5),
 	(3, 6),
 	(4, 7);
 /*!40000 ALTER TABLE `pokemon_has_habilidad` ENABLE KEYS */;
+
+-- Volcando estructura para tabla pokebd.usuarios
+DROP TABLE IF EXISTS `usuarios`;
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Volcando datos para la tabla pokebd.usuarios: ~0 rows (aproximadamente)
+/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` (`id`, `nombre`, `password`) VALUES
+	(1, 'admin', 'admin'),
+	(2, 'mikel', 'sapi');
+/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
