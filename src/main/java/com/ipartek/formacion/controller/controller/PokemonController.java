@@ -56,9 +56,7 @@ public class PokemonController extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		response.addHeader("Access-Control-Allow-Origin", "*");
-		response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+
 
 
 		response.setContentType("application/json");
