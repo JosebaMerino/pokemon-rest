@@ -26,7 +26,7 @@ public class LoginController extends HttpServlet {
 
 	private final static Logger LOG = Logger.getLogger(LoginController.class);
 
-	private UsuarioDAO daoUsuario;
+	private static UsuarioDAO daoUsuario;
     /**
      * @see HttpServlet#HttpServlet()
      */
