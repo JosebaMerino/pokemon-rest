@@ -181,25 +181,25 @@ public class PokemonDAO implements IDAO<Pokemon> {
 			int affectedRows = pst.executeUpdate();
 			if(affectedRows == 1) {
 				// obtener el id generado
-				ResultSet rs = pst.getGeneratedKeys();
+				try(ResultSet rs = pst.getGeneratedKeys()){
+					resul = pojo;
+					rs.next();
+					resul.setId(rs.getInt(1));
+					// por cada habilidad insertar en pokemon_has_habilidades
+					String SQL = "INSERT INTO pokemon_has_habilidad(pokemonId, habilidadId) VALUES (?, ?);";
+					for (Habilidad habilidad: pojo.getHabilidades()) {
+						LOG.trace(pojo.getId() + "--" +  habilidad.getId());
 
-				resul = pojo;
-				rs.next();
-				resul.setId(rs.getInt(1));
-				// por cada habilidad insertar en pokemon_has_habilidades
-				String SQL = "INSERT INTO pokemon_has_habilidad(pokemonId, habilidadId) VALUES (?, ?);";
-				for (Habilidad habilidad: pojo.getHabilidades()) {
-					LOG.trace(pojo.getId() + "--" +  habilidad.getId());
+						try(PreparedStatement pstHabilidad = con.prepareStatement(SQL)) {
+							pstHabilidad.setInt(1, pojo.getId());
+							pstHabilidad.setInt(2, habilidad.getId());
+							LOG.trace(SQL);
+							int affectedRows2 = pstHabilidad.executeUpdate();
+							if(affectedRows2 == 1) {
 
-					try(PreparedStatement pstHabilidad = con.prepareStatement(SQL)) {
-						pstHabilidad.setInt(1, pojo.getId());
-						pstHabilidad.setInt(2, habilidad.getId());
-						LOG.trace(SQL);
-						int affectedRows2 = pstHabilidad.executeUpdate();
-						if(affectedRows2 == 1) {
+							}
 
 						}
-
 					}
 				}
 			}
