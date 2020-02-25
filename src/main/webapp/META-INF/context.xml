@@ -7,8 +7,21 @@
 		maxWait="10000"
 		name="jdbc/mydb"
 		type="javax.sql.DataSource"
+		url="jdbc:mysql://localhost:3306/pokemon-joseba"
+		username="root"
+		password="root"
+		/>
+</Context>
+<!--Context>
+	<Resource auth="Container"
+	    driverClassName="com.mysql.jdbc.Driver"
+		maxActive="100"
+		maxIdle="30"
+		maxWait="10000"
+		name="jdbc/mydb"
+		type="javax.sql.DataSource"
 		url="jdbc:mysql://localhost:3308/pokebd"
 		username="root"
 		password=""
 		/>
-</Context>
+</Context-->

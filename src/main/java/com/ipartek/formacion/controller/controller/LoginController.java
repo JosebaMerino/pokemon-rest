@@ -53,28 +53,36 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Recibir el objeto de la peticion.
-		BufferedReader reader = request.getReader();
-		Gson gson = new Gson();
-		Usuario usuarioRecibido = null;
-		usuarioRecibido = gson.fromJson(reader, Usuario.class);
+		try {
+			BufferedReader reader = request.getReader();
+			Gson gson = new Gson();
+			Usuario usuarioRecibido = null;
+			usuarioRecibido = gson.fromJson(reader, Usuario.class);
 
-		// Probar que esta en la BD.
+			LOG.info("El usuario recibido es : " + usuarioRecibido);
+			// Probar que esta en la BD.
 
-		Usuario usuarioLogeado = daoUsuario.login(usuarioRecibido);
+			Usuario usuarioLogeado = daoUsuario.login(usuarioRecibido);
+			LOG.trace("El usuario encontrado es: " + usuarioLogeado);
 
-		if(usuarioLogeado != null) {
-			// Si el login es correcto creamos la sesion y respondemos con codigo 200
+			if(usuarioLogeado != null) {
+				LOG.trace("Se procede al logeo del usuario " + usuarioLogeado);
+				// Si el login es correcto creamos la sesion y respondemos con codigo 200
 
-			HttpSession session = request.getSession();
-			session.setAttribute("usuario", usuarioLogeado);
-			session.setMaxInactiveInterval(600);
+				HttpSession session = request.getSession();
+				session.setAttribute("usuario", usuarioLogeado);
+				session.setMaxInactiveInterval(600);
 
-			response.setStatus(HttpServletResponse.SC_OK);
+				response.setStatus(HttpServletResponse.SC_OK);
+				LOG.trace("Usuario " + usuarioLogeado.getNombre() + " logeado correctamente");
 
 
-		} else {
-			// Si el login no es correcto pues tendremos que responder con el codigo 401
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			} else {
+				// Si el login no es correcto pues tendremos que responder con el codigo 401
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			}
+		} catch (Exception e) {
+			LOG.error(e);
 		}
 	}
 

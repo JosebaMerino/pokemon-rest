@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- OTC 09-12-2010 adaptado para Sonar 2.1.2
+cambios: 20-12-2010 regla de los select estrella pasa de estar en el modulo GenericIllegalRegexp a RegexpMultiline
+regla JavaNCSS del tamanio de metodos, clases y ficheros se deja solo con la severidad de error
+regla javadoc method: comentadas las propiedades no encontradas
+se aniade la regla SimplifyBooleanExpression en Checkstyle y se quita de PMD porque en Sonar 212 falta esta regla en el plugin de PMD
+
+las reglas adicionales a las del Dashboard EJIE estan marcadas como 'OTC xx-12-2010 aniadida'
+-->
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+	<metadata name="com.atlas-sw.eclipse" value="I like Sydney"/>
+	<property name="severity" value="info"/>
+	<!-- Soporte Calidad 26-12-2007. Inclusion de nuevas reglas -->
+	<!-- Deteccion de "select *" -->
+	<!-- OTC 20-12-2010 <module name="GenericIllegalRegexp"> hasta 2010-12 pasa a ser RegexpMultiline-->
+	<module name="RegexpMultiline">
+		<property name="format" value="select \*"/>
+		<property name="severity" value="error"/>
+		<property name="ignoreCase" value="true"/>
+		<property name="message" value="No se deben ejecutar sentencias del tipo SELECT *"/>
+	</module>
+	<!-- <module name="SuppressionFilter">
+        <property name="file" value="${checkstyle.suppressions.file}"/>
+    </module> -->
+    <module name="SuppressionCommentFilter"/>
+	<!-- <module name="PackageHtml"/> -->
+	<module name="TreeWalker">
+		<property name="tabWidth" value="4"/>
+		<module name="FileContentsHolder"/>
+		<module name="MethodName">
+			<property name="severity" value="warning"/>
+		</module>
+		<!-- Soporte 01-2008 Cumplimiento de normativa de nombre de paquetes java-->
+		<!-- CAC 03-2009 Regla para Nombres de paquetes java recomendada por Checkstyle -->
+		<!-- CAC 05-2009 Regla para Nombres de paquetes: Admite mayusculas -->
+		<module name="PackageName">
+			<property name="severity" value="error"/>
+			<!--property name="format" value="^[a-z]\d\d[a-z](\.[a-zA-Z_][a-zA-Z0-9_]*)*$"/-->
+			<!--property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/-->
+			<property name="format" value="^[a-z]+[\.a-zA-Z0-9_]*$"/>
+		</module>
+		<module name="AvoidStarImport">
+			<property name="severity" value="warning"/>
+		</module>
+		<module name="HideUtilityClassConstructor">
+			<property name="severity" value="error"/>
+		</module>
+		<module name="JavadocType">
+			<property name="severity" value="warning"/>
+			<property name="authorFormat" value="\S"/>
+		</module>
+		<module name="JavadocMethod">
+			<property name="severity" value="warning"/>
+			<property name="allowUndeclaredRTE" value="false"/>
+			<property name="allowThrowsTagsForSubclasses" value="false"/>
+			<!-- estas propiedades no aparecen 
+            		<property name="logLoadErrors" value="true"/>
+            		<property name="suppressLoadErrors" value="true"/>
+					-->
+		</module>
+		<module name="MutableException">
+			<property name="severity" value="warning"/>
+		</module>
+		<!-- OTC 09-12-2010 cambiada la prioridad a info -->
+		<module name="NeedBraces">
+			<property name="severity" value="info"/>
+		</module>
+		<!-- OTC 09-12-2010 aniadida -->
+		<module name="EqualsHashCode">
+			<property name="severity" value="warning"/>
+		</module>
+		<!-- 2008/11/03 cambio de serveridad de warning a info-->
+		<module name="RequireThis">
+			<property name="severity" value="info"/>
+		</module>
+		<!-- Soporte 04-2007 Cumplimiento normativa de nombres de ficheros java-->
+		<!--
+        	<module name="TypeName">
+			<property name="format" value="^[a-zA-Z][0-9][0-9].*$"/>
+			<property name="severity" value="error"/>
+		</module>
+-->
+		<module name="VisibilityModifier">
+			<property name="severity" value="warning"/>
+		</module>
+		<!-- Soporte Calidad 03-11-2008. cambio de severity de info a warning -->
+		<module name="MagicNumber">
+			<property name="severity" value="warning"/>
+		</module>
+		<module name="UncommentedMain">
+			<property name="severity" value="warning"/>
+		</module>
+		<!-- Soporte Calidad 26-12-2007. Inclusion de nuevas reglas -->
+		<!-- Hacer obligatorio lo que nos da el JavaNCSS -->
+		<module name="JavaNCSS">
+			<property name="methodMaximum" value="200"/>
+			<property name="classMaximum" value="2000"/>
+			<property name="fileMaximum" value="2500"/>
+			<property name="severity" value="error"/>
+		</module>
+		<!-- OTC 20-12-2010 Sonar solo admite 1 regla 1 vez.
+		Si esta 2 veces salta con los 2 umbrales pero una sola severidad.
+		Se deja entonces solo la parte de error para que un mismo incumplimiento no se cuente 2 veces
+		y se comenta esta 
+				<module name="JavaNCSS">
+		    <property name="methodMaximum" value="100"/>
+		    <property name="classMaximum" value="1500"/>
+		    <property name="fileMaximum" value="1700"/>
+		    <property name="severity" value="warning"/>
+		</module>
+		-->
+		<!-- Se controla que la CCN no supere 25 (se quita de PMD) -->
+		<module name="CyclomaticComplexity">
+			<property name="max" value="25"/>
+			<property name="severity" value="warning"/>
+		</module>
+		<!-- OTC 09-12-2010 estaba definida en PMD pero para Sonar 212 no salta por PMD
+			por eso se aniade en Checkstyle -->
+		<module name="SimplifyBooleanExpression">
+			<property name="severity" value="warning"/>
+		</module>
+		<module name="GenericWhitespace">
+			<property name="severity" value="info"/>
+		</module>
+		<module name="AnnotationUseStyle">
+			<property name="severity" value="info"/>
+			<property name="elementStyle" value="expanded"/>
+			<property name="trailingArrayComma" value="never"/>
+			<property name="closingParens" value="always"/>
+		</module>
+		<module name="MissingDeprecated">
+			<property name="severity" value="info"/>
+		</module>
+		<module name=" MissingOverride ">
+			<property name="severity" value="info"/>
+		</module>
+		<module name=" PackageAnnotation ">
+			<property name="severity" value="info"/>
+		</module>
+	</module>
+</module>

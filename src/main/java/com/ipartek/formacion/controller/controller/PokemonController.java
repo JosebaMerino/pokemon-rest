@@ -81,8 +81,7 @@ public class PokemonController extends HttpServlet {
 		try {
 			id = Utilidades.obtenerId(request.getPathInfo());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e);
 		}
 		List<Pokemon> pokemons;
 		if (nombre != null && nombre.length() != 0) {
@@ -113,6 +112,8 @@ public class PokemonController extends HttpServlet {
 				out.print(json.toJson(objetoRespuesta));
 				out.flush();
 
+			} catch (Exception e) {
+				LOG.error(e);
 			}
 		}
 
@@ -124,35 +125,40 @@ public class PokemonController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		BufferedReader reader = request.getReader();
-		Gson gson = new Gson();
-		Pokemon pokemon = null;
-		pokemon = gson.fromJson(reader, Pokemon.class);
-		int status = 0;
-
 		try {
-			pokemon = dao.create(pokemon);
-			status = HttpServletResponse.SC_NO_CONTENT;
-		}catch(MySQLIntegrityConstraintViolationException e) {
-			LOG.error("Pokemon duplicado");
-			status = HttpServletResponse.SC_CONFLICT;
-		}
-		catch (Exception e) {
+			BufferedReader reader = request.getReader();
+			Gson gson = new Gson();
+			Pokemon pokemon = null;
+			pokemon = gson.fromJson(reader, Pokemon.class);
+			int status = 0;
+
+			try {
+				pokemon = dao.create(pokemon);
+				status = HttpServletResponse.SC_NO_CONTENT;
+			}catch(MySQLIntegrityConstraintViolationException e) {
+				LOG.error("Pokemon duplicado");
+				status = HttpServletResponse.SC_CONFLICT;
+			}
+			catch (Exception e) {
+				LOG.error(e);
+				status = HttpServletResponse.SC_BAD_REQUEST;
+			}
+
+			if(status >= 200 && status < 300) {
+			try (PrintWriter out = response.getWriter()) {
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				Gson json = new Gson();
+				out.print(json.toJson(pokemon));
+				out.flush();
+
+			} catch (Exception e) {
+				LOG.error(e);
+			}
+			} else {
+				response.setStatus(status);
+			}
+		} catch (Exception e) {
 			LOG.error(e);
-			status = HttpServletResponse.SC_BAD_REQUEST;
-			e.printStackTrace();
-		}
-
-		if(status >= 200 && status < 300) {
-		try (PrintWriter out = response.getWriter()) {
-			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			Gson json = new Gson();
-			out.print(json.toJson(pokemon));
-			out.flush();
-
-		}
-		} else {
-			response.setStatus(status);
 		}
 
 	}
@@ -162,36 +168,41 @@ public class PokemonController extends HttpServlet {
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		BufferedReader reader = request.getReader();
-		Gson gson = new Gson();
-		Pokemon pokemon = null;
-		pokemon = gson.fromJson(reader, Pokemon.class);
-		int status = 0;
-
 		try {
-			int id = Utilidades.obtenerId(request.getPathInfo());
-			pokemon = dao.update(id, pokemon);
-			status = HttpServletResponse.SC_OK;
-		}catch(MySQLIntegrityConstraintViolationException e) {
-			LOG.error("Pokemon duplicado");
-			status = HttpServletResponse.SC_CONFLICT;
-		}
-		catch (Exception e) {
-			LOG.error(e);
-			status = HttpServletResponse.SC_BAD_REQUEST;
-			e.printStackTrace();
-		}
+			BufferedReader reader = request.getReader();
+			Gson gson = new Gson();
+			Pokemon pokemon = null;
+			pokemon = gson.fromJson(reader, Pokemon.class);
+			int status = 0;
 
-		if(status >= 200 && status < 300) {
-			try (PrintWriter out = response.getWriter()) {
-				response.setStatus(status);
-				Gson json = new Gson();
-				out.print(json.toJson(pokemon));
-				out.flush();
-
+			try {
+				int id = Utilidades.obtenerId(request.getPathInfo());
+				pokemon = dao.update(id, pokemon);
+				status = HttpServletResponse.SC_OK;
+			}catch(MySQLIntegrityConstraintViolationException e) {
+				LOG.error("Pokemon duplicado");
+				status = HttpServletResponse.SC_CONFLICT;
 			}
-		} else {
-			response.setStatus(status);
+			catch (Exception e) {
+				LOG.error(e);
+				status = HttpServletResponse.SC_BAD_REQUEST;
+			}
+
+			if(status >= 200 && status < 300) {
+				try (PrintWriter out = response.getWriter()) {
+					response.setStatus(status);
+					Gson json = new Gson();
+					out.print(json.toJson(pokemon));
+					out.flush();
+
+				} catch (Exception e) {
+					LOG.error(e);
+				}
+			} else {
+				response.setStatus(status);
+			}
+		} catch (Exception e) {
+			LOG.error(e);
 		}
 	}
 
@@ -204,8 +215,7 @@ public class PokemonController extends HttpServlet {
 		try {
 			id = Utilidades.obtenerId(request.getPathInfo());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e);
 		}
 		if(id >= 0) {
 			Pokemon pokemon = null;
@@ -225,6 +235,8 @@ public class PokemonController extends HttpServlet {
 					out.print(json.toJson(pokemon));
 					out.flush();
 
+				} catch (Exception e) {
+					LOG.error(e);
 				}
 			}
 		}

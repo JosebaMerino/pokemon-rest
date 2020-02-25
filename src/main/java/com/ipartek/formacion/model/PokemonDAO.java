@@ -55,8 +55,7 @@ public class PokemonDAO implements IDAO<Pokemon> {
 				ResultSet rs = pst.executeQuery() ) {
 			resul = mapper(rs);
 		} catch (Exception e) {
-			// TODO: LOG
-			e.printStackTrace();
+			LOG.error(e);
 		}
 
 		return resul;
