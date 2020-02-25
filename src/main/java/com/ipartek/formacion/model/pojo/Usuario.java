@@ -1,6 +1,12 @@
 package com.ipartek.formacion.model.pojo;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 3062181847034258509L;
 	private int id;
 	private String nombre;
 	private String password;
