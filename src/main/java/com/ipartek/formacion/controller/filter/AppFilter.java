@@ -1,22 +1,23 @@
 package com.ipartek.formacion.controller.filter;
 
 import java.io.IOException;
+import java.net.HttpRetryException;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.ipartek.formacion.controller.controller.PokemonController;
+import com.ipartek.formacion.controller.controller.LoginController;
 
 /**
  * Servlet Filter implementation class AppFilter
@@ -30,7 +31,7 @@ import com.ipartek.formacion.controller.controller.PokemonController;
 					, urlPatterns = { "/*" })
 public class AppFilter implements Filter {
 
-	private final static Logger LOG = LogManager.getLogger(PokemonController.class);
+	private final static Logger LOG = Logger.getLogger(AppFilter.class);
 
 
     /**
@@ -54,21 +55,23 @@ public class AppFilter implements Filter {
 		// TODO Auto-generated method stub
 		// place your code here
 
-		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
-
-		ServletContext sc = req.getServletContext();
-
-		LOG.debug("RequestURL" + req.getRequestURL());
-		LOG.debug("RequestURI" + req.getRequestURI());
-		LOG.debug("HTTP Protocol" + req.getProtocol());
-		LOG.debug("HTTP RemoteAddr" + req.getRemoteAddr());
-		LOG.debug("HTTP RemoteHost" + req.getRemoteHost());
-
 
 		res.addHeader("Access-Control-Allow-Origin", "*");
 		res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
 		res.addHeader("Access-Control-Allow-Headers", "Content-Type");
+
+
+		HttpServletRequest req = (HttpServletRequest) request;
+		if(req.getCookies() != null) {
+
+			for(Cookie cookie : req.getCookies()) {
+				LOG.trace(cookie.getName() + "::" + cookie.getValue());
+			}
+		} else {
+			LOG.trace("No tiene cookies");
+		}
+
 
 		// pass the request along the filter chain
 		chain.doFilter(request, res);

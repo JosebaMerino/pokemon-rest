@@ -2,6 +2,7 @@ package com.ipartek.formacion.controller.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -75,6 +76,14 @@ public class LoginController extends HttpServlet {
 
 				response.setStatus(HttpServletResponse.SC_OK);
 				LOG.trace("Usuario " + usuarioLogeado.getNombre() + " logeado correctamente");
+
+				response.setContentType("application/json"); // por defecto => text/html; charset=UTF-8
+				response.setCharacterEncoding("UTF-8");
+
+				PrintWriter out = response.getWriter();
+				out.print("{ \"JSESSIONID\": \""+ session.getId()  + "\" }"); // "imprimimos" un JSON
+				LOG.trace("{ JSESSIONID: "+ session.getId()  + " }");
+				out.flush(); // termina de escribir dato en response body
 
 
 			} else {
